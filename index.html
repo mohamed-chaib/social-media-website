@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./style.css">
+  <!--import bootstrap-->
+  <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <!--import axios-->
+  <script src="./node_modules/axios/dist/axios.min.js"></script>
+
+  </link>
+  <title>Tarmeez</title>
+  <style>
+    body {
+      background-color: #f0ecff;
+    }
+    #add-post{
+      position: fixed;
+      bottom: 5%;
+      right: 7%;
+      font-size: xx-large;
+      width: 50px;
+      height: 50px;
+      line-height: 0.5;
+    }
+/*==========LOADER STYELES===========*/
+/* From Uiverse.io by mobinkakei */ 
+.wrapper {
+  width: 200px;
+  height: 60px;
+  position: relative;
+  z-index: 1;
+}
+
+.circle {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  border-radius: 50%;
+  background-color: #000;
+  left: 15%;
+  transform-origin: 50%;
+  animation: circle7124 .5s alternate infinite ease;
+}
+
+@keyframes circle7124 {
+  0% {
+    top: 60px;
+    height: 5px;
+    border-radius: 50px 50px 25px 25px;
+    transform: scaleX(1.7);
+  }
+
+  40% {
+    height: 20px;
+    border-radius: 50%;
+    transform: scaleX(1);
+  }
+
+  100% {
+    top: 0%;
+  }
+}
+
+.circle:nth-child(2) {
+  left: 45%;
+  animation-delay: .2s;
+}
+
+.circle:nth-child(3) {
+  left: auto;
+  right: 15%;
+  animation-delay: .3s;
+}
+
+.shadow {
+  width: 20px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: rgba(0,0,0,0.5);
+  position: absolute;
+  top: 62px;
+  transform-origin: 50%;
+  z-index: -1;
+  left: 15%;
+  filter: blur(1px);
+  animation: shadow046 .5s alternate infinite ease;
+}
+
+@keyframes shadow046 {
+  0% {
+    transform: scaleX(1.5);
+  }
+
+  40% {
+    transform: scaleX(1);
+    opacity: .7;
+  }
+
+  100% {
+    transform: scaleX(.2);
+    opacity: .4;
+  }
+}
+
+.shadow:nth-child(4) {
+  left: 45%;
+  animation-delay: .2s
+}
+
+.shadow:nth-child(5) {
+  left: auto;
+  right: 15%;
+  animation-delay: .3s;
+}
+
+
+  </style>
+</head>
+
+<body>
+  
+  <!--==========LOADER STYELES===========-->
+  <div  style="position: fixed; left: 0; right: 0;top: 0; bottom: 0; margin: auto auto; display: flex; justify-content: center; align-items: center; ">
+    <div id="loader" style="z-index: 99999;" class="wrapper">
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="shadow"></div>
+      <div class="shadow"></div>
+      <div class="shadow"></div>
+    </div>
+</div>
+  
+
+  <!--BUTTON CREATE POST-->
+  <button id="add-post"data-bs-toggle="modal"  data-bs-target="#CreatePostModal" type="button" class="btn btn-primary rounded-circle d-none" onclick="createPostBtnClicked()">+</button>
+ <!--BUTTON CREATE POST//-->
+  <!--==========MODALS=========================-->
+  <!--LOGIN MODAL-->
+  <div class="modal fade" id="logInModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Log In</h1>
+        <button type="button" id="btn-close-log-in" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">@</span>
+            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" id="usernameLogIn">
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control" aria-label="password" placeholder="Password" id="passwordLogIn">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" id="log-in" onclick="logIn()">Log In</button>
+      </div>
+    </div>
+  </div>
+  </div>
+  <!--LOGIN MODAL//-->
+  <!--Sign Up MODAL-->
+  <div class="modal fade" id="signUpModal" tabindex="-1" aria-labelledby="signUpModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
+          <button type="button" class="btn-close" id="btn-close-sign-up" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label for="formFile" class="form-label">profile image</label>
+              <input class="form-control" type="file" id="image-input">
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="Name" id="name-input" aria-label="Username">
+            </div>
+          <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">@</span>
+              <input type="text" class="form-control" placeholder="Username" id="username-input" aria-label="Username" aria-describedby="basic-addon1">
+            </div>
+            <div class="mb-3">
+              <input type="password" class="form-control" aria-label="password" placeholder="Password" id="password-input">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" onclick="register()">Sign UP</button>
+        </div>
+      </div>
+    </div>
+    </div>
+    <!--Sign UP MODAL//-->
+    <!-- CREATE POST MODAL-->
+    <div class="modal fade" id="CreatePostModal" tabindex="-1" aria-labelledby="CreatePostModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="post-modal-title">Create new post</h1>
+            <button type="button" class="btn-close" id="btn-close-sign-up" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="input-group mb-3">
+                <input type="hidden"  id="post-id">
+                <input type="text" class="form-control" placeholder="Title" id="post-title-input" aria-label="Title">
+              </div>
+              <div class="mb-3">
+                <label for="message-text" class="col-form-label">body:</label>
+                <textarea class="form-control"  id="post-body-text"></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="formFile" class="form-label"> image</label>
+                <input class="form-control" type="file" id="image-input-post">
+              </div>
+              
+            
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="reset" class="btn btn-secondary" id="btn-close-create-post" data-bs-dismiss="modal">close</button>
+            <button type="submit" class="btn btn-primary" onclick="addPostUser()" >Create</button>
+          </div>
+        </div>
+      </div>
+      </div>
+     <!-- CREATE POST MODAL //-->
+      <!-- DELETE POST MODAL-->
+    <div class="modal fade" id="deletePostModal" tabindex="-1" aria-labelledby="CreatePostModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="post-modal-title">  Delete post?</h1>
+            <input type="hidden" id="post-id-delete">
+            <button type="button" class="btn-close" id="btn-close-sign-up" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+         
+          <div class="modal-footer">
+            <button type="reset" class="btn btn-secondary" id="btn-close-delete-post" data-bs-dismiss="modal">close</button>
+            <button type="submit" class="btn btn-danger" onclick="confirmPostBtnDelete()" >Deletee</button>
+          </div>
+        </div>
+      </div>
+      </div>
+     <!-- DELETE POST MODAL //-->
+    <!--MODALS //-->
+    <!--=================ALERTS==============-->
+    <!--=====SUCCESS LOG IN-->
+    <div id="success-alert" style="position: fixed;z-index: 1100; width: 40%; right: 0;bottom: 0;"></div>
+    <!--=====SUCCESS LOG IN //-->
+    <!--=================ALERTS //==============-->
+  <!-- NAVIGATION BAR CONTENT   -->
+  <div class="container col-8   ">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary rounded-1 rounded-top-0 shadow-sm"
+      style="background-color:aqua ;">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Tarmmez</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="sendUserIdLogedIn()">profile</a>
+            </li>
+          </ul>
+          <!--FOR NON LOGED IN-->
+          <div class="d-flex w-100 justify-content-end gap-3" id="non-loged-in">
+            <button type="button" data-bs-toggle="modal" data-bs-target="#logInModal" class="btn btn-outline-success" id="btnLogIn">Log In</button>
+            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#signUpModal" id="btnSignUP">Sign Up</button>
+          </div>
+          <!--FOR NON LOGED IN //-->
+          <!--FOR LOGED IN-->
+          <div class="d-flex w-100 justify-content-start gap-3 flex-row-reverse  "   id="loged-in">
+            <button type="button" class="btn btn-outline-danger "  id="btnLogOut" onclick="LogOut()" >Log Out</button>
+            <span id="loged-in-profile"></span>
+
+          </div>
+
+        <!--FOR LOGED IN-->
+        </div>
+      </div>
+    </nav>
+  </div>
+  <!-- MAIN CONTENT-->
+  <div class="container mt-5 col-8" >
+      <!--POSTs -->
+    <div id="posts"  class="posts d-flex flex-column gap-4 pb-3">
+       </div>
+    <!--POSTs // -->
+  </div>
+  <script src="./mainLogic.js" ></script>
+  <script src="./script.js"></script>
+</body>
+
+</html>
